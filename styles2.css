@@ -1,0 +1,60 @@
+ th,td {
+    border:2px solid rgb(165, 124, 61);
+    padding: 10px;
+    border-style: outset;
+    background-color: rgb(95, 91, 91);
+    
+}
+h1{
+    text-align: center;
+    color: rgb(223, 224, 137);
+    background-color: rgb(47, 109, 56);
+    height: 40px;
+}
+caption {
+    font-family: 'Algerian', sans-serif;
+    font-size: 25px;
+    text-decoration: underline;
+    padding-bottom: 8px;
+}
+table{
+    border: 2px solid rgb(165, 124, 61);
+    background-color: rgb(168, 155, 155);
+    padding: 5px;
+}
+th{
+    font-size: 24px;
+    text-decoration: underline;
+}
+tr{
+    text-align: center;
+    font-size: 18px;
+    color: #E0E0E0;
+}
+p{
+    font-size: 20px;
+    text-align: center;
+}
+a:link {
+  color: yellow;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: lightskyblue;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: blue;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: red;
+  background-color: transparent;
+  text-decoration: underline;
+}
