@@ -1,75 +1,120 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="styles2.css" type="text/css">
-        <title>Guns Catalogue</title>
-    </head>
-    <body>
-        <h1>Welcome! What can I interest you with!</h1>
-        <p style="background-color: rgb(47, 109, 56); color: rgb(223, 224, 137);">Dear Stranger ,<br> I can relate with the spark that brought you here. You and I are at the same side of a coin.<br>
-        Here , I've got a selection of some good items you might wanna buy.<hr></p>
-        <p>You see it is , as I say : <q><i>Gun</i> Rhymes with <i>Fun</i> for a reason stranger.</q></p>
-        <table style="width:100%">
-            <caption>Guns Catalogue</caption>
-            <tr>
-                <th></th>
-                <th>Name</th>
-                <th>FEATURE</th>
-                <th>PRICE</th>
-                <th>LEARN MORE</th>
-            </tr>
-            <tr>
-                <th rowspan="2">PISTOLS</th>
-                <td>Colt M1911</td>
-                <td>Semi-Automatic</td>
-                <td>$100</td>
-                <td><a href="Colt.html" target="_blank">More About ColtM1911</a></td>
-            </tr>
-            <tr>
-                <td>Ruger GP100</td>
-                <td>Revolver</td>
-                <td>$100</td>
-                <td><a href="Ruger.html" target="_blank">More About RugerGP100</a></td>
-            </tr>
-            <tr>
-                <th rowspan="2">ASSAULT RIFLES</th>
-                <td>AK-47</td>
-                <td>7.62x39mm</td>
-                <td>$200</td>
-                <td><a href="AK47.html" target="_blank">More About AK-47</a></td>
-            </tr>
-            <tr>
-                <td>M4 Carbine</td>
-                <td>5.56mm</td>
-                <td>$200</td>
-                <td><a href="M4.html" target="_blank">More About M4 Carbine</a></td>
-            </tr>
-            <tr>
-                <th rowspan="2">SHOTGUNS</th>
-                <td>Stevens 301</td>
-                <td>Single-Barrel</td>
-                <td>$300</td>
-                <td><a href="Stevens.html" target="_blank">More About Stevens 301</a></td>
-            </tr>
-            <tr>
-                <td>Stoeger Coach Gun</td>
-                <td>Double-Barrel</td>
-                <td>$300</td>
-                <td><a href="Stoeger.html" target="_blank">More About Stoeger Coach Gun</a></td>
-            </tr>
-            <tr>
-                <th rowspan="2">SNIPERS</th>
-                <td>M24 SWS</td>
-                <td>Military grade</td>
-                <td>$400</td>
-                <td><a href="M24.html" target="_blank">More About M24 SWS</a></td>
-            </tr>
-            <tr>
-                <td>AX308</td>
-                <td>Police grade</td>
-                <td>$400</td>
-                <td><a href="AX308.html" target="_blank">More About AX 308</a></td>
-            </tr>
-        </table>
-    </body>
+<head>
+    <link rel="stylesheet" href="styles2.css" type="text/css">
+    <title>Guns Catalogue</title>
+</head>
+
+<body>
+
+<h1>Welcome! What can I interest you with!</h1>
+
+<p style="background-color: rgb(47, 109, 56); color: rgb(223, 224, 137);">
+Dear Stranger ,<br>
+I can relate with the spark that brought you here.<br>
+Here , I've got a selection of some good items you might wanna buy.
+<hr>
+</p>
+
+<p>You see it is , as I say : <q><i>Gun</i> Rhymes with <i>Fun</i> for a reason stranger.</q></p>
+
+<!-- ADD FORM -->
+<div style="text-align:center;">
+    <input id="category" placeholder="Category">
+    <input id="name" placeholder="Name">
+    <input id="feature" placeholder="Feature">
+    <input id="price" placeholder="Price">
+    <input id="link" placeholder="Link (e.g. Colt.html)">
+    <button onclick="addGun()">Add Gun</button>
+</div>
+
+<br>
+
+<table style="width:100%">
+    <caption>Guns Catalogue</caption>
+
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>FEATURE</th>
+            <th>PRICE</th>
+            <th>LEARN MORE</th>
+            <th>ACTION</th>
+        </tr>
+    </thead>
+
+    <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+
+async function loadGuns() {
+    const res = await fetch("http://127.0.0.1:3000/guns");
+    const guns = await res.json();
+
+    const table = document.getElementById("tableBody");
+    table.innerHTML = "";
+
+    const grouped = {};
+
+    guns.forEach(g => {
+        if (!grouped[g.category]) grouped[g.category] = [];
+        grouped[g.category].push(g);
+    });
+
+    for (let category in grouped) {
+        const items = grouped[category];
+
+        items.forEach((gun, index) => {
+            table.innerHTML += `
+                <tr>
+                    ${index === 0 ? `<th rowspan="${items.length}">${category.toUpperCase()}</th>` : ""}
+                    <td>${gun.name}</td>
+                    <td>${gun.feature}</td>
+                    <td>$${gun.price}</td>
+                    <td><a href="${gun.link}" target="_blank">Learn More</a></td>
+                    <td><button onclick="deleteGun(${gun.id})">Delete</button></td>
+                </tr>
+            `;
+        });
+    }
+}
+
+// ADD
+async function addGun() {
+    const gun = {
+        category: document.getElementById("category").value,
+        name: document.getElementById("name").value,
+        feature: document.getElementById("feature").value,
+        price: document.getElementById("price").value,
+        link: document.getElementById("link").value
+    };
+
+    await fetch("http://127.0.0.1:3000/guns", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(gun)
+    });
+
+    loadGuns();
+}
+
+// DELETE
+async function deleteGun(id) {
+    await fetch(`http://127.0.0.1:3000/guns/${id}`, {
+        method: "DELETE"
+    });
+
+    loadGuns();
+}
+
+// INIT
+loadGuns();
+
+</script>
+
+</body>
 </html>
